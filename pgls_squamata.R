@@ -130,3 +130,28 @@ summary(adult.weight.neo)
 
 
 
+
+#adult weight mal
+cutData <- Squamata[,c(5,9,10,11,17,38,42),drop=FALSE] 
+cutData[cutData < 0] <-NA
+cutData <- na.omit(cutData)
+tree <- read.tree("GitHub/squamates/min20Fixed516.nwk")
+
+cutData$Species <- gsub(" ", "_", cutData$Species) 
+cutData$common_name<-gsub("_", "", cutData$common_name)
+includedSpecies <- cutData$Species
+
+pruned.tree<-drop.tip(
+  tree, setdiff(
+    tree$tip.label, includedSpecies))
+pruned.tree <- keep.tip(pruned.tree,pruned.tree$tip.label)
+cutData$Keep <- cutData$Species %in% pruned.tree$tip.label
+cutData <- cutData[!(cutData$Keep==FALSE),]
+rownames(cutData)<-cutData$Species
+SE<-setNames(cutData$SE_simple,cutData$Species)[rownames(cutData)]
+View(cutData)
+
+#pgls model
+adult.weight.mal<-pglsSEyPagel(MalignancyPrevalence~log10(adult_weight.g.),data=cutData,
+                               tree=pruned.tree,se=SE,method="ML")
+summary(adult.weight.mal)
