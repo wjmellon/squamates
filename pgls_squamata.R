@@ -27,17 +27,17 @@ library(ggsci)
 library(patchwork)
 library(poolr)
 library(rr2)
+library(dplyr)
 
 Data <- read.csv("GitHub/squamates/min20-2022.05.16.csv")
 View(Data)
 
-library(dplyr)
 
 #Cut the data
 squamata_data <- Data %>%
   filter(grepl("Squamata", Orders, ignore.case = TRUE))
 
-#write.csv(squamata_data, "squamata_data.csv", row.names = FALSE)
+write.csv(squamata_data, "squamata_data.csv", row.names = FALSE)
 
 
 #pgls sey base (just run all of this)
